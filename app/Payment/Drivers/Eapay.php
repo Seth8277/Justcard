@@ -12,7 +12,7 @@ class Eapay implements PaymentDriverInterface
 {
     protected $params = [];
 
-    public $required_params = [
+    public static $required_params = [
         'appid' => '应用ID',
         'key' => '应用KEY',
         'subject' => '订单标题',
@@ -24,6 +24,14 @@ class Eapay implements PaymentDriverInterface
     public function __construct($params)
     {
         $this->params = $params;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getRequiredParams(): array
+    {
+        return self::$required_params;
     }
 
     public function submit($trade_number, $price)

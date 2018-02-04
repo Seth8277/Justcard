@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class Category extends Resource
+class PaymentDriver extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -14,12 +14,6 @@ class Category extends Resource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'photo' => $this->photo,
-            'weight' => $this->weight,
-            'products' => Product::collection($this->products)
-        ];
+        return parent::toArray($request);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -55,11 +56,9 @@ class Handler extends ExceptionHandler
             return response(['error' => array_first(array_collapse($exception->errors()))], 400);
         }
         // 用户认证的异常，返回 401 的 http code 和错误信息
-        if ($exception instanceof UnauthorizedHttpException) {
+        if ($exception instanceof UnauthorizedHttpException || $exception instanceof AuthenticationException) {
             return response($exception->getMessage(), 401);
         }
-
-        return parent::render($request, $exception);
 
         return parent::render($request, $exception);
     }

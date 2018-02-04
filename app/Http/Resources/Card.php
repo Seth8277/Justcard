@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class Category extends Resource
+class Card extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +16,9 @@ class Category extends Resource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'photo' => $this->photo,
-            'weight' => $this->weight,
-            'products' => Product::collection($this->products)
+            'number' => $this->when(!empty($this->number), $this->number),
+            'order' => $this->when(!empty($this->order_id), new Order($this->order)),
+            'key' => $this->key
         ];
     }
 }

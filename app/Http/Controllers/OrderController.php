@@ -20,7 +20,7 @@ class OrderController extends Controller
             return $this->failed('订单不存在', Response::HTTP_NOT_FOUND);
     }
 
-    public function pay(Order $order,PaymentMethod $method)
+    public function pay(Order $order, PaymentMethod $method)
     {
         if (!$order->exists) {
             return $this->failed('订单不存在', Response::HTTP_NOT_FOUND);
@@ -31,6 +31,8 @@ class OrderController extends Controller
         ];
 
         $trade = Trade::create($data);
-        return Payment::build($method->name)->submit($trade->id,$order->price);
+        $params = json_decode($method->params);
+        return Payment::build($method->name, $params)
+            ->submit($trade->id, $order->price);
     }
 }

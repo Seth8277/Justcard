@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderCreated;
+use App\Http\Resources\Card as CardResource;
 use App\Http\Resources\Product as ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 use Webpatser\Uuid\Uuid;
 
@@ -52,9 +55,40 @@ class ProductController extends Controller
         if (Auth::check())
             $data['user_id'] = Auth::user()->id;
 
-        if ($order = $product->orders()->create($data))
-            return $this->success(['order_id' => $order->id], Response::HTTP_CREATED);
-        else
+        if ($order = $product->orders()->create($data)) {
+            // 触动事件
+            OrderCreated::dispatch($order);
+
+            return $this->success(['order_id' => "{$data['id']}"], Response::HTTP_CREATED);
+        } else {
             return $this->internalError();
+
+        }
+    }
+
+    public function cards(Product $product)
+    {
+        return CardResource::collection($product->cards);
+    }
+
+    public function add_cards(Product $product, Request $request)
+    {
+        $data = $this->validate($request, [
+            'cards' => 'required|json'
+        ]);
+
+        $cards = json_decode($data['cards']);
+        foreach ($cards as $number => $key) {
+            if (!empty($key))
+                $product->cards()->create([
+                    'number' => $number,
+                    'key' => $key
+                ]);
+            else
+                $product->cards()->create([
+                    'key' => $number
+                ]);
+        }
+        return $this->created();
     }
 }

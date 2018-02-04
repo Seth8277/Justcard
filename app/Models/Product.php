@@ -9,17 +9,17 @@ class Product extends Model
 {
     protected $fillable = ['name', 'description', 'price', 'category_id'];
 
-    protected $dispatchesEvents = [
-        'deleting' => ProductDeleting::class
-    ];
-
     public function orders()
     {
-        $this->hasMany(Order::class);
+        return $this->hasMany(Order::class);
     }
 
     public function cards(){
         return $this->hasMany(Card::class);
+    }
+
+    public function stock(){
+        return $this->cards()->count();
     }
 
     public function getPriceAttribute($value){

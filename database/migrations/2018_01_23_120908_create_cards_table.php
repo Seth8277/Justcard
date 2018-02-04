@@ -16,8 +16,8 @@ class CreateCardsTable extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('product_id');
-            $table->unsignedInteger('order_id');
-            $table->text('number');
+            $table->unsignedInteger('order_id')->nullable();
+            $table->text('number')->nullable();
             $table->text('key');
             $table->timestamps();
         });

@@ -2,11 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\ApiResponse;
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class RedirectIfAuthenticated
 {
+    use ApiResponse;
+
     /**
      * Handle an incoming request.
      *
@@ -18,7 +22,7 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            return $this->message('你已经登录过了', Response::HTTP_ALREADY_REPORTED);
         }
 
         return $next($request);

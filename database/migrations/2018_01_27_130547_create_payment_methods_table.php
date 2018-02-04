@@ -17,7 +17,8 @@ class CreatePaymentMethodsTable extends Migration
             $table->increments('id');
             $table->text('name');
             $table->text('driver');
-            $table->text('photo');
+            $table->text('params');
+            $table->text('photo')->nullable();
             $table->timestamps();
         });
     }

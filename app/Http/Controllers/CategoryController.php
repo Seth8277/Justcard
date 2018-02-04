@@ -7,17 +7,25 @@ use App\Http\Resources\Product as ProductResource;
 use App\Http\Resources\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
 
 
-    public function show(){
-        return CategoryResource::collection(Category::all());
+    public function show()
+    {
+        $data = Cache::remember('categories', 120, function () {
+            return CategoryResource::collection(Category::all());
+
+        });
+
+        return $data;
     }
 
-    public function store(Request $request,Category $category){
-        $data = $this->validate($request,[
+    public function store(Request $request, Category $category)
+    {
+        $data = $this->validate($request, [
             'id' => 'nullable|exists:category',
             'name' => 'required|string',
             'weight' => 'required|integer|max:100|min:0',
@@ -32,11 +40,13 @@ class CategoryController extends Controller
             return $this->internalError();
     }
 
-    public function products(Category $category){
+    public function products(Category $category)
+    {
         return new ProductResource($category->products());
     }
 
-    public function randomPhoto(){
+    public function randomPhoto()
+    {
         $photos = [
             "https://i.loli.net/2018/01/24/5a681357af13d.png",
             "https://i.loli.net/2018/01/24/5a681357bdcd7.png",
@@ -53,7 +63,7 @@ class CategoryController extends Controller
             "https://i.loli.net/2018/01/24/5a681486db07b.png",
             "https://i.loli.net/2018/01/24/5a681486dbbe9.png",
         ];
-        $random = mt_rand(0, count($photos) -1);
+        $random = mt_rand(0, count($photos) - 1);
         return $photos[$random];
 
     }

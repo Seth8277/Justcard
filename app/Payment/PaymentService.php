@@ -1,31 +1,35 @@
 <?php
+
 namespace App\Payment;
 
 
 use App\Models\Setting;
-use App\Models\Settings;
+use App\Payment\Drivers\Eapay;
 use Exception;
+use ReflectionClass;
 
 class PaymentService
 {
-    protected $drivers = [];
+    protected $drivers = [
+        'eapay' => Eapay::class,
+    ];
 
     /**
      * @param $name
      * @return PaymentDriverInterface
      * @throws Exception
      */
-    public function build($name){
-        if (!isset($driver[$name])){
+    public function build($name, $params)
+    {
+        if (!isset($this->drivers[$name])) {
             throw new Exception('Driver not found');
         }
 
-        $driver = $this->drivers[$name];
+        $driver = new ReflectionClass($this->drivers[$name]);
         // 初始化
-        if (!$driver->isInstance() && $driver->isInstantiable()){
-            $params = json_decode(Setting::find("{$name} params")->value);
+        if ($driver->isInstantiable()) {
             $driver = $driver->newInstance($params);
-        }else{
+        } else {
             throw new Exception('Invalid driver');
         }
 
@@ -34,5 +38,20 @@ class PaymentService
 
         return $driver;
     }
+
+    public function getDriver($name){
+        if (!isset($this->drivers[$name]))
+            throw  new Exception('Driver not found');
+        return $this->drivers[$name];
+    }
+
+    /**
+     * @return array
+     */
+    public function getDrivers(): array
+    {
+        return $this->drivers;
+    }
+
 
 }

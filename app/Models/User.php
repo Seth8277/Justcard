@@ -32,10 +32,6 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
-    protected $dispatchesEvents = [
-        'deleting' => UserDeleting::class
-    ];
-
     public function orders(){
         $this->hasMany(Order::class);
     }

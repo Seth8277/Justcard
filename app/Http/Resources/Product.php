@@ -17,8 +17,9 @@ class Product extends Resource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'weight' => $this->weight,
-            'photo' => $this->photo,
+            'price' => $this->price,
+            'description' => $this->description,
+            'stock' => $this->stock()
         ];
     }
 }
